@@ -19,7 +19,7 @@ async def king_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("⚔️ Summon Igris", callback_data="arise")],
         [InlineKeyboardButton(
-            "📢 Join Channel", url="https://t.me/YourChannel")],
+            "📢 Join Channel", url="https://t.me/+-0J1SPuDQNllY2Y0")],
         [InlineKeyboardButton("📬 Contact K I N G",
                               url="https://t.me/IamKing419")],
     ]
@@ -87,3 +87,4 @@ async def summon_igris_callback(update: Update, context: ContextTypes.DEFAULT_TY
     await query.message.reply_text(ai_reply)
 
 # === HANDLERS ===
+
