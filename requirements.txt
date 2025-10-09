@@ -6,6 +6,9 @@ python-nmap==0.6.1
 libnmap==0.7.5
 python-whois==0.7.3
 requests==2.31.0
+httpx==0.28.1
+pytz
 wget
 asyncio
+
 
