@@ -8,6 +8,9 @@ from telegram.ext import (
     ContextTypes,
 )
 import re
+import os
+from threading import Thread
+from flask import Flask
 
 from king.menu import king_menu, summon_igris_callback
 from king.scan import scanip
@@ -80,9 +83,28 @@ async def send_copyable_message(update: Update, text: str):
     await update.message.reply_text(text, parse_mode="Markdown", reply_markup=markup)
 
 
+# ---------------- KEEP ALIVE ----------------
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "🛡️ Igris Sentinel is awake — Render ping successful 👑"
+
+def run():
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.daemon = True
+    t.start()
+
+
 # ---------------- MAIN ----------------
 def main():
-    app = Application.builder().token(TELEGRAM_TOKEN).build()
+    keep_alive()  # ✅ keep the service alive on Render
+
+    app_bot = Application.builder().token(TELEGRAM_TOKEN).build()
 
     summon_igris_handler = CallbackQueryHandler(summon_igris_callback, pattern="^arise$")
     ping_handler = CommandHandler("ping", ping)
@@ -97,42 +119,26 @@ def main():
     whois_handler = CommandHandler("whois", whois_command)
     play_handler = CommandHandler("play", play)
 
-    app.add_handler(king_handler)
-    app.add_handler(play_handler)
-    app.add_handler(show_handler)
-    app.add_handler(start_handler)
-    app.add_handler(menu_button_handler)
-    app.add_handler(scanips)
-    app.add_handler(summon_igris_handler)
-    app.add_handler(king_shi)
-    app.add_handler(getips)
-    app.add_handler(CommandHandler("url", url_command))
-    app.add_handler(CommandHandler("menu", king_menu))
-    app.add_handler(img)
-    app.add_handler(ping_handler)
-    app.add_handler(alive_handler)
-    app.add_handler(whois_handler)
-
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, ai_auto_chat))
+    app_bot.add_handler(king_handler)
+    app_bot.add_handler(play_handler)
+    app_bot.add_handler(show_handler)
+    app_bot.add_handler(start_handler)
+    app_bot.add_handler(menu_button_handler)
+    app_bot.add_handler(scanips)
+    app_bot.add_handler(summon_igris_handler)
+    app_bot.add_handler(king_shi)
+    app_bot.add_handler(getips)
+    app_bot.add_handler(CommandHandler("url", url_command))
+    app_bot.add_handler(CommandHandler("menu", king_menu))
+    app_bot.add_handler(img)
+    app_bot.add_handler(ping_handler)
+    app_bot.add_handler(alive_handler)
+    app_bot.add_handler(whois_handler)
+    app_bot.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, ai_auto_chat))
 
     print("🤖 Igris is online... [Engine: OpenAI]")
-    app.run_polling()
+    app_bot.run_polling()
 
-
-# 🧠 KEEP ALIVE ON RENDER
-import os
-if os.environ.get("RENDER") == "true":
-    import threading
-    import http.server
-    import socketserver
-
-    def fake_server():
-        port = int(os.environ.get("PORT", 10000))
-        handler = http.server.SimpleHTTPRequestHandler
-        with socketserver.TCPServer(("", port), handler) as httpd:
-            httpd.serve_forever()
-
-    threading.Thread(target=fake_server, daemon=True).start()
 
 if __name__ == "__main__":
     main()
