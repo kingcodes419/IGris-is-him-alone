@@ -7,7 +7,7 @@ import math
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 # === CONFIG ===
-GEMINI_API_KEY = "AIzaSyD80E6_Q2D50mTwW_o3OEHVNnDEqwLGYMU"
+GEMINI_API_KEY = "AIzaSyAxdJ-6D1zJEwjcoLrVMGbZAbEw4Nm40WQ"
 GEMINI_MODEL = "gemini-2.0-flash-lite"
 KING_ID = 6966542803  # King’s Telegram numeric ID
 BOT_NAME = "igris"  # lowercase username
